@@ -6,8 +6,8 @@ from pydantic import BaseModel
 app = FastAPI()
 
 @app.get("/")
-async def root():
-    return "Successful"
+async def read_root():
+    return {"Data": "Successful"}
 # Model untuk Data Wisata
 class Wisata(BaseModel):
     id_wisata: str
