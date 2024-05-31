@@ -7,7 +7,7 @@ app = FastAPI()
 
 @app.get("/")
 async def read_root():
-    return {"Data": "Successful"}
+    return {"Data":"Successful"}
 # Model untuk Data Wisata
 class Wisata(BaseModel):
     id_wisata: str
