@@ -67,7 +67,7 @@ def get_pajak():
 
 # Fungsi untuk mengambil data tourguide dari web hosting lain
 def get_data_tourGuide_from_web():
-    url = "https://tour-guide-ks4n.onrender.com/"  # Ganti dengan URL yang sebenarnya
+    url = "https://tour-guide-ks4n.onrender.com/tourguide"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
