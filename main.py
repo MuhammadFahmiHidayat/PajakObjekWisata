@@ -150,3 +150,134 @@ class Bank(BaseModel):
 def get_bank():
     data_bank = get_data_bank_from_web()
     return data_bank
+
+
+def combine_wisata_pajak():
+    wisata_data = get_wisata()
+    pajak_data = get_pajak()
+
+    combined_data = []
+    for wisata in wisata_data:
+        for pajak in pajak_data:
+            combined_obj = {
+                "id_wisata": wisata['id_wisata'],
+                "nama_objek": wisata['nama_objek'],
+                "pajak": pajak
+            }
+            combined_data.append(combined_obj)
+
+    return combined_data
+
+class WisataPajak(BaseModel):
+    id_wisata: str
+    nama_objek: str
+    pajak: Pajak
+
+@app.get("/wisataPajak", response_model=List[WisataPajak])
+def get_combined_data():
+    combined_data = combine_wisata_pajak()
+    return combined_data
+
+def combine_wisata_tour_guide():
+    wisata_data = get_wisata()
+    tour_guide_data = get_tourGuide()
+
+    combined_data = []
+    for wisata in wisata_data:
+        for tour_guide in tour_guide_data:
+            combined_obj = {
+                "id_wisata": wisata['id_wisata'],
+                "nama_objek": wisata['nama_objek'],
+                "tour_guide": tour_guide
+            }
+            combined_data.append(combined_obj)
+
+    return combined_data
+
+class WisataTourGuide(BaseModel):
+    id_wisata: str
+    nama_objek: str
+    tour_guide: TourGuide
+
+@app.get("/wisataTourGuide", response_model=List[WisataTourGuide])
+def get_combined_data():
+    combined_data = combine_wisata_tour_guide()
+    return combined_data
+
+def combine_wisata_asuransi():
+    wisata_data = get_wisata()
+    asuransi_data = get_asuransi()
+
+    combined_data = []
+    for wisata in wisata_data:
+        for asuransi in asuransi_data:
+            combined_obj = {
+                "id_wisata": wisata['id_wisata'],
+                "nama_objek": wisata['nama_objek'],
+                "asuransi": asuransi
+            }
+            combined_data.append(combined_obj)
+
+    return combined_data
+
+class WisataAsuransi(BaseModel):
+    id_wisata: str
+    nama_objek: str
+    asuransi: Asuransi
+
+@app.get("/wisataAsuransi", response_model=List[WisataAsuransi])
+def get_combined_data():
+    combined_data = combine_wisata_asuransi()
+    return combined_data
+
+def combine_wisata_hotel():
+    wisata_data = get_wisata()
+    hotel_data = get_hotel()
+
+    combined_data = []
+    for wisata in wisata_data:
+        for hotel in hotel_data:
+            combined_obj = {
+                "id_wisata": wisata['id_wisata'],
+                "nama_objek": wisata['nama_objek'],
+                "hotel": hotel
+            }
+            combined_data.append(combined_obj)
+
+    return combined_data
+
+class WisataHotel(BaseModel):
+    id_wisata: str
+    nama_objek: str
+    hotel: Hotel
+
+@app.get("/wisataHotel", response_model=List[WisataHotel])
+def get_combined_data():
+    combined_data = combine_wisata_hotel()
+    return combined_data
+
+def combine_wisata_bank():
+    wisata_data = get_wisata()
+    bank_data = get_bank()
+
+    combined_data = []
+    for wisata in wisata_data:
+        for bank in bank_data:
+            combined_obj = {
+                "id_wisata": wisata['id_wisata'],
+                "nama_objek": wisata['nama_objek'],
+                "bank": bank
+            }
+            combined_data.append(combined_obj)
+
+    return combined_data
+
+class WisataBank(BaseModel):
+    id_wisata: str
+    nama_objek: str
+    bank: Bank
+
+@app.get("/wisataBank", response_model=List[WisataBank])
+def get_combined_data():
+    combined_data = combine_wisata_bank()
+    return combined_data
