@@ -1,5 +1,5 @@
 import requests
-from typing import List
+from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
@@ -49,9 +49,17 @@ def get_wisata_index(id_wisata):
             return index
     return None
 
-# Endpoint untuk memperbarui data wisata
+# Endpoint untuk detail get id
+@app.get("/wisata/{id_wisata}", response_model=Optional[Wisata])
+def get_wisata_by_id(id_wisata: str):
+    for wisata in data_wisata:
+        if wisata['id_wisata'] == id_wisata:
+            return Wisata(**wisata)
+    return None
+
+# Endpoint untuk memperbarui data wisata dengan hanya memasukkan id_wisata
 @app.put("/wisata/{id_wisata}")
-def update_wisata(id_wisata: str, wisata_baru: Wisata):
+def update_wisata_by_id(id_wisata: str, wisata_baru: Wisata):
     index = get_wisata_index(id_wisata)
     if index is not None:
         data_wisata[index] = wisata_baru.dict()
