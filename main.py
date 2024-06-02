@@ -3,11 +3,16 @@ from typing import List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-app = FastAPI()
+app = FastAPI(
+    title="Objek Wisata",
+    description="API untuk mengelola data objek wisata",
+    docs_url="/",  # Ubah docs_url menjadi "/"
+)
 
 @app.get("/")
 async def read_root():
     return {"Data":"Successful"}
+
 # Model untuk Data Wisata
 class Wisata(BaseModel):
     id_wisata: str
@@ -60,7 +65,7 @@ def get_pajak():
     data_pajak = get_data_pajak_from_web()
     return data_pajak
 
-
+# Fungsi untuk mengambil data tourguide dari web hosting lain
 def get_data_tourGuide_from_web():
     url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
@@ -69,18 +74,19 @@ def get_data_tourGuide_from_web():
     else:
         raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data TOUR GUIDE dari web hosting.")
 
-# Model untuk Data Pajak
+# Model untuk Data Tour Guide
 class TourGuide(BaseModel):
     nama_guider: str
     profile: str
     fee: float
 
-# Endpoint untuk mendapatkan data pajak
+# Endpoint untuk mendapatkan data Tour Guide
 @app.get("/tourGuide", response_model=List[TourGuide])
 def get_tourGuide():
     data_tourGuide = get_data_tourGuide_from_web()
     return data_tourGuide
 
+# Fungsi untuk mengambil data asuransi dari web hosting lain
 def get_data_asuransi_from_web():
     url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
@@ -89,18 +95,19 @@ def get_data_asuransi_from_web():
     else:
         raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data ASURANSI dari web hosting.")
 
-# Model untuk Data Pajak
+# Model untuk Data Asuransi
 class Asuransi(BaseModel):
     id_asuransi: int
     nama_wisata: str
     nama_daerah: str
 
-# Endpoint untuk mendapatkan data pajak
+# Endpoint untuk mendapatkan data asuransi
 @app.get("/asuransi", response_model=List[Asuransi])
 def get_asuransi():
     data_asuransi = get_data_asuransi_from_web()
     return data_asuransi
 
+# Fungsi untuk mengambil data hotel dari web hosting lain
 def get_data_hotel_from_web():
     url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
@@ -109,7 +116,7 @@ def get_data_hotel_from_web():
     else:
         raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data HOTEL dari web hosting.")
 
-# Model untuk Data Pajak
+# Model untuk Data Hotel
 class Hotel(BaseModel):
     id_room: int
     room_number: int
@@ -117,12 +124,13 @@ class Hotel(BaseModel):
     rate: str
     availability: int
 
-# Endpoint untuk mendapatkan data pajak
+# Endpoint untuk mendapatkan data hotel
 @app.get("/hotel", response_model=List[Hotel])
 def get_hotel():
     data_hotel = get_data_hotel_from_web()
     return data_hotel
 
+# Fungsi untuk mengambil data bank dari web hosting lain
 def get_data_bank_from_web():
     url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
@@ -131,13 +139,13 @@ def get_data_bank_from_web():
     else:
         raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data BANK dari web hosting.")
 
-# Model untuk Data Pajak
+# Model untuk Data Bank
 class Bank(BaseModel):
     nik: int
     nama: str
     kabupaten: str
 
-# Endpoint untuk mendapatkan data pajak
+# Endpoint untuk mendapatkan data bank
 @app.get("/bank", response_model=List[Bank])
 def get_bank():
     data_bank = get_data_bank_from_web()
