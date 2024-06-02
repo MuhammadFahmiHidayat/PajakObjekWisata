@@ -45,7 +45,7 @@ def get_data_pajak_from_web():
     if response.status_code == 200:
         return response.json()
     else:
-        raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data pajak dari web hosting.")
+        raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data PAJAK dari web hosting.")
 
 # Model untuk Data Pajak
 class Pajak(BaseModel):
@@ -59,3 +59,86 @@ class Pajak(BaseModel):
 def get_pajak():
     data_pajak = get_data_pajak_from_web()
     return data_pajak
+
+
+def get_data_tourGuide_from_web():
+    url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data TOUR GUIDE dari web hosting.")
+
+# Model untuk Data Pajak
+class TourGuide(BaseModel):
+    nama_guider: str
+    profile: str
+    fee: float
+
+# Endpoint untuk mendapatkan data pajak
+@app.get("/tourGuide", response_model=List[TourGuide])
+def get_tourGuide():
+    data_tourGuide = get_data_tourGuide_from_web()
+    return data_tourGuide
+
+def get_data_asuransi_from_web():
+    url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data ASURANSI dari web hosting.")
+
+# Model untuk Data Pajak
+class Asuransi(BaseModel):
+    id_asuransi: int
+    nama_wisata: str
+    nama_daerah: str
+
+# Endpoint untuk mendapatkan data pajak
+@app.get("/asuransi", response_model=List[Asuransi])
+def get_asuransi():
+    data_asuransi = get_data_asuransi_from_web()
+    return data_asuransi
+
+def get_data_hotel_from_web():
+    url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data HOTEL dari web hosting.")
+
+# Model untuk Data Pajak
+class Hotel(BaseModel):
+    id_room: int
+    room_number: int
+    room_type: str
+    rate: str
+    availability: int
+
+# Endpoint untuk mendapatkan data pajak
+@app.get("/hotel", response_model=List[Hotel])
+def get_hotel():
+    data_hotel = get_data_hotel_from_web()
+    return data_hotel
+
+def get_data_bank_from_web():
+    url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data BANK dari web hosting.")
+
+# Model untuk Data Pajak
+class Bank(BaseModel):
+    nik: int
+    nama: str
+    kabupaten: str
+
+# Endpoint untuk mendapatkan data pajak
+@app.get("/bank", response_model=List[Bank])
+def get_bank():
+    data_bank = get_data_bank_from_web()
+    return data_bank
