@@ -15,11 +15,11 @@ class Wisata(BaseModel):
 
 # Dummy data untuk wisata
 data_wisata = [
-    {"id_wisata": "OP01", "nama_objek": "Orchid Forest Cikole"},
-    {"id_wisata": "OP02", "nama_objek": "Taman Impian Jaya Ancol"},
-    {"id_wisata": "OP03", "nama_objek": "Candi Borobudur"},
-    {"id_wisata": "OP04", "nama_objek": "Uluwatu Temple"},
-    {"id_wisata": "OP05", "nama_objek": "Surabaya North Quay"}
+    {"id_wisata": "OP01", "nama_objek": "Orchid Forest Cikole", "nama_daerah": "Bandung"},
+    {"id_wisata": "OP02", "nama_objek": "Taman Impian Jaya Ancol", "nama_daerah": "Jakarta"},
+    {"id_wisata": "OP03", "nama_objek": "Candi Borobudur", "nama_daerah": "Yogyakarta"},
+    {"id_wisata": "OP04", "nama_objek": "Uluwatu Temple", "nama_daerah": "Bali"},
+    {"id_wisata": "OP05", "nama_objek": "Surabaya North Quay", "nama_daerah": "Surabaya"}
 ]
 
 # Endpoint untuk menambahkan data wisata
