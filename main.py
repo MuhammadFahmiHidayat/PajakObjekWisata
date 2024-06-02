@@ -43,6 +43,32 @@ def tambah_wisata(wisata: Wisata):
 def get_wisata():
     return data_wisata
 
+def get_wisata_index(id_wisata):
+    for index, wisata in enumerate(data_wisata):
+        if wisata['id_wisata'] == id_wisata:
+            return index
+    return None
+
+# Endpoint untuk memperbarui data wisata
+@app.put("/wisata/{id_wisata}")
+def update_wisata(id_wisata: str, wisata_baru: Wisata):
+    index = get_wisata_index(id_wisata)
+    if index is not None:
+        data_wisata[index] = wisata_baru.dict()
+        return {"message": "Data wisata berhasil diperbarui."}
+    else:
+        raise HTTPException(status_code=404, detail="Data wisata tidak ditemukan.")
+
+# Endpoint untuk menghapus data wisata
+@app.delete("/wisata/{id_wisata}")
+def delete_wisata(id_wisata: str):
+    index = get_wisata_index(id_wisata)
+    if index is not None:
+        del data_wisata[index]
+        return {"message": "Data wisata berhasil dihapus."}
+    else:
+        raise HTTPException(status_code=404, detail="Data wisata tidak ditemukan.")
+
 # Fungsi untuk mengambil data pajak dari web hosting lain
 def get_data_pajak_from_web():
     url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
