@@ -99,6 +99,21 @@ def get_pajak():
     data_pajak = get_data_pajak_from_web()
     return data_pajak
 
+def get_pajak_index(id_pajak):
+    data_pajak = get_data_pajak_from_web()
+    for index, pajak in enumerate(data_pajak):
+        if pajak['id_pajak'] == id_pajak:
+            return index
+    return None
+
+@app.get("/pajak/{id_pajak}", response_model=Optional[Pajak])
+def get_pajak_by_id(id_pajak: int):
+    data_pajak = get_data_pajak_from_web()
+    for pajak in data_pajak:
+        if pajak['id_pajak'] == id_pajak:
+            return Pajak(**pajak)
+    return None
+
 # Fungsi untuk mengambil data tourguide dari web hosting lain
 def get_data_tourGuide_from_web():
     url = "https://tour-guide-ks4n.onrender.com/tourguide"  # Ganti dengan URL yang sebenarnya
@@ -110,6 +125,7 @@ def get_data_tourGuide_from_web():
 
 # Model untuk Data Tour Guide
 class TourGuide(BaseModel):
+    id_guider:str
     nama_guider: str
     profile: str
     fee: int
@@ -119,6 +135,21 @@ class TourGuide(BaseModel):
 def get_tourGuide():
     data_tourGuide = get_data_tourGuide_from_web()
     return data_tourGuide
+
+def get_tourGuide_index(id_guider):
+    data_tourGuide = get_data_tourGuide_from_web()
+    for index, tourGuide in enumerate(data_tourGuide):
+        if tourGuide['id_guider'] == id_guider:
+            return index
+    return None
+
+@app.get("/tourGuide/{id_guider}", response_model=Optional[TourGuide])
+def get_tourGuide_by_id(id_guider: str):
+    data_tourGuide = get_data_tourGuide_from_web()
+    for tourGuide in data_tourGuide:
+        if tourGuide['id_guider'] == id_guider:
+            return TourGuide(**tourGuide)
+    return None
 
 # Fungsi untuk mengambil data asuransi dari web hosting lain
 def get_data_asuransi_from_web():
