@@ -175,8 +175,9 @@ def get_data_bank_from_web():
 
 # Model untuk Data Bank
 class Bank(BaseModel):
-    nik: int
-    nama: str
+    id_rekeneing: int
+    saldo: int
+    activate_date: str
     kabupaten: str
 
 # Endpoint untuk mendapatkan data bank
