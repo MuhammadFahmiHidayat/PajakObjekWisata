@@ -77,9 +77,18 @@ def delete_wisata(id_wisata: str):
     else:
         raise HTTPException(status_code=404, detail="Data wisata tidak ditemukan.")
 
+
+
+
+
+
+
+
+
+
 # Fungsi untuk mengambil data pajak dari web hosting lain
 def get_data_pajak_from_web():
-    url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
+    url = "https://api-government.onrender.com/pajak"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -88,7 +97,7 @@ def get_data_pajak_from_web():
 
 # Model untuk Data Pajak
 class Pajak(BaseModel):
-    id_pajak: int
+    id_pajak: str
     jenis_pajak: str
     tarif_pajak: float
     besar_pajak: float
@@ -107,12 +116,21 @@ def get_pajak_index(id_pajak):
     return None
 
 @app.get("/pajak/{id_pajak}", response_model=Optional[Pajak])
-def get_pajak_by_id(id_pajak: int):
+def get_pajak_by_id(id_pajak: str):
     data_pajak = get_data_pajak_from_web()
     for pajak in data_pajak:
         if pajak['id_pajak'] == id_pajak:
             return Pajak(**pajak)
     return None
+
+
+
+
+
+
+
+
+
 
 # Fungsi untuk mengambil data tourguide dari web hosting lain
 def get_data_tourGuide_from_web():
@@ -151,9 +169,18 @@ def get_tourGuide_by_id(id_guider: str):
             return TourGuide(**tourGuide)
     return None
 
+
+
+
+
+
+
+
+
+
 # Fungsi untuk mengambil data asuransi dari web hosting lain
 def get_data_asuransi_from_web():
-    url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
+    url = "https://example.com/api/asuransi"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -162,19 +189,43 @@ def get_data_asuransi_from_web():
 
 # Model untuk Data Asuransi
 class Asuransi(BaseModel):
-    id_asuransi: int
-    nama_wisata: str
-    nama_daerah: str
+    id_asuransi: str
+    nama_asuransi: str
+    deskripsi: str
+    premi: float
 
-# Endpoint untuk mendapatkan data asuransi
+def get_asuransi_index(id_asuransi):
+    data_asuransi = get_data_asuransi_from_web()
+    for index, asuransi in enumerate(data_asuransi):
+        if asuransi['id_asuransi'] == id_asuransi:
+            return index
+    return None
+
 @app.get("/asuransi", response_model=List[Asuransi])
 def get_asuransi():
     data_asuransi = get_data_asuransi_from_web()
     return data_asuransi
 
+@app.get("/asuransi/{id_asuransi}", response_model=Optional[Asuransi])
+def get_asuransi_by_id(id_asuransi: str):
+    data_asuransi = get_data_asuransi_from_web()
+    for asuransi in data_asuransi:
+        if asuransi['id_asuransi'] == id_asuransi:
+            return Asuransi(**asuransi)
+    return None
+
+
+
+
+
+
+
+
+
+
 # Fungsi untuk mengambil data hotel dari web hosting lain
 def get_data_hotel_from_web():
-    url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
+    url = "https://example.com/api/hotel"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -183,21 +234,44 @@ def get_data_hotel_from_web():
 
 # Model untuk Data Hotel
 class Hotel(BaseModel):
-    id_room: int
-    room_number: int
-    room_type: str
-    rate: str
-    availability: int
+    id_hotel: str
+    nama_hotel: str
+    alamat: str
+    rating: float
+    harga_per_malam: int
 
-# Endpoint untuk mendapatkan data hotel
+def get_hotel_index(id_hotel):
+    data_hotel = get_data_hotel_from_web()
+    for index, hotel in enumerate(data_hotel):
+        if hotel['id_hotel'] == id_hotel:
+            return index
+    return None
+
 @app.get("/hotel", response_model=List[Hotel])
 def get_hotel():
     data_hotel = get_data_hotel_from_web()
     return data_hotel
 
+@app.get("/hotel/{id_hotel}", response_model=Optional[Hotel])
+def get_hotel_by_id(id_hotel: str):
+    data_hotel = get_data_hotel_from_web()
+    for hotel in data_hotel:
+        if hotel['id_hotel'] == id_hotel:
+            return Hotel(**hotel)
+    return None
+
+
+
+
+
+
+
+
+
+
 # Fungsi untuk mengambil data bank dari web hosting lain
 def get_data_bank_from_web():
-    url = "https://example.com/api/pajak"  # Ganti dengan URL yang sebenarnya
+    url = "https://example.com/api/bank"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -206,16 +280,40 @@ def get_data_bank_from_web():
 
 # Model untuk Data Bank
 class Bank(BaseModel):
-    id_rekeneing: int
-    saldo: int
-    activate_date: str
-    kabupaten: str
+    id_bank: str
+    nama_bank: str
+    alamat: str
+    kode_bank: str
+    jenis_bank: str
 
-# Endpoint untuk mendapatkan data bank
+def get_bank_index(id_bank):
+    data_bank = get_data_bank_from_web()
+    for index, bank in enumerate(data_bank):
+        if bank['id_bank'] == id_bank:
+            return index
+    return None
+
 @app.get("/bank", response_model=List[Bank])
 def get_bank():
     data_bank = get_data_bank_from_web()
     return data_bank
+
+@app.get("/bank/{id_bank}", response_model=Optional[Bank])
+def get_bank_by_id(id_bank: str):
+    data_bank = get_data_bank_from_web()
+    for bank in data_bank:
+        if bank['id_bank'] == id_bank:
+            return Bank(**bank)
+    return None
+
+
+
+
+
+
+
+
+
 
 
 def combine_wisata_pajak():
@@ -244,6 +342,15 @@ def get_combined_data():
     combined_data = combine_wisata_pajak()
     return combined_data
 
+
+
+
+
+
+
+
+
+
 def combine_wisata_tour_guide():
     wisata_data = get_wisata()
     tour_guide_data = get_tourGuide()
@@ -269,6 +376,15 @@ class WisataTourGuide(BaseModel):
 def get_combined_data():
     combined_data = combine_wisata_tour_guide()
     return combined_data
+
+
+
+
+
+
+
+
+
 
 def combine_wisata_asuransi():
     wisata_data = get_wisata()
@@ -296,6 +412,15 @@ def get_combined_data():
     combined_data = combine_wisata_asuransi()
     return combined_data
 
+
+
+
+
+
+
+
+
+
 def combine_wisata_hotel():
     wisata_data = get_wisata()
     hotel_data = get_hotel()
@@ -321,6 +446,15 @@ class WisataHotel(BaseModel):
 def get_combined_data():
     combined_data = combine_wisata_hotel()
     return combined_data
+
+
+
+
+
+
+
+
+
 
 def combine_wisata_bank():
     wisata_data = get_wisata()
