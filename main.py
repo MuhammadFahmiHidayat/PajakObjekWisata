@@ -180,7 +180,7 @@ def get_tourGuide_by_id(id_guider: str):
 
 # Fungsi untuk mengambil data asuransi dari web hosting lain
 def get_data_asuransi_from_web():
-    url = "https://example.com/api/asuransi"  # Ganti dengan URL yang sebenarnya
+    url = "https://eai-fastapi.onrender.com/asuransi"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -190,9 +190,7 @@ def get_data_asuransi_from_web():
 # Model untuk Data Asuransi
 class Asuransi(BaseModel):
     id_asuransi: str
-    nama_asuransi: str
-    deskripsi: str
-    premi: float
+    jenis_asuransi: str
 
 def get_asuransi_index(id_asuransi):
     data_asuransi = get_data_asuransi_from_web()
@@ -225,38 +223,33 @@ def get_asuransi_by_id(id_asuransi: str):
 
 # Fungsi untuk mengambil data hotel dari web hosting lain
 def get_data_hotel_from_web():
-    url = "https://example.com/api/hotel"  # Ganti dengan URL yang sebenarnya
+    url = "https://webhoteleai.online/APIroom"
     response = requests.get(url)
     if response.status_code == 200:
-        return response.json()
+        data = response.json()
+        return data['room']  # Mengambil hanya bagian 'room' dari JSON
     else:
         raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data HOTEL dari web hosting.")
-
+    
 # Model untuk Data Hotel
 class Hotel(BaseModel):
-    id_hotel: str
-    nama_hotel: str
-    alamat: str
-    rating: float
-    harga_per_malam: int
-
-def get_hotel_index(id_hotel):
-    data_hotel = get_data_hotel_from_web()
-    for index, hotel in enumerate(data_hotel):
-        if hotel['id_hotel'] == id_hotel:
-            return index
-    return None
+    RoomID: str
+    RoomNumber: str
+    RoomType: str
+    Rate: str
+    Availability: str
+    Insurance: str
 
 @app.get("/hotel", response_model=List[Hotel])
 def get_hotel():
     data_hotel = get_data_hotel_from_web()
     return data_hotel
 
-@app.get("/hotel/{id_hotel}", response_model=Optional[Hotel])
-def get_hotel_by_id(id_hotel: str):
+@app.get("/hotel/{RoomID}", response_model=Optional[Hotel])
+def get_hotel_by_id(RoomID: str):
     data_hotel = get_data_hotel_from_web()
     for hotel in data_hotel:
-        if hotel['id_hotel'] == id_hotel:
+        if hotel['RoomID'] == RoomID:
             return Hotel(**hotel)
     return None
 
@@ -271,25 +264,25 @@ def get_hotel_by_id(id_hotel: str):
 
 # Fungsi untuk mengambil data bank dari web hosting lain
 def get_data_bank_from_web():
-    url = "https://example.com/api/bank"  # Ganti dengan URL yang sebenarnya
+    url = "https://jumantaradev.my.id/api/obj-wisata"  # Ganti dengan URL yang sebenarnya
     response = requests.get(url)
     if response.status_code == 200:
-        return response.json()
+        data = response.json()
+        return data['data']['data']
     else:
         raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data BANK dari web hosting.")
 
 # Model untuk Data Bank
 class Bank(BaseModel):
-    id_bank: str
-    nama_bank: str
-    alamat: str
-    kode_bank: str
-    jenis_bank: str
+    id: int
+    saldo: str
+    active_date: str
+    expired_date: str
 
-def get_bank_index(id_bank):
+def get_bank_index(id):
     data_bank = get_data_bank_from_web()
     for index, bank in enumerate(data_bank):
-        if bank['id_bank'] == id_bank:
+        if bank['id'] == id:
             return index
     return None
 
@@ -298,11 +291,11 @@ def get_bank():
     data_bank = get_data_bank_from_web()
     return data_bank
 
-@app.get("/bank/{id_bank}", response_model=Optional[Bank])
-def get_bank_by_id(id_bank: str):
+@app.get("/bank/{id}", response_model=Optional[Bank])
+def get_bank_by_id(id: int):
     data_bank = get_data_bank_from_web()
     for bank in data_bank:
-        if bank['id_bank'] == id_bank:
+        if bank['id'] == id:
             return Bank(**bank)
     return None
 
@@ -320,15 +313,14 @@ def combine_wisata_pajak():
     wisata_data = get_wisata()
     pajak_data = get_pajak()
 
-    combined_data = []
-    for wisata in wisata_data:
-        for pajak in pajak_data:
-            combined_obj = {
-                "id_wisata": wisata['id_wisata'],
-                "nama_objek": wisata['nama_objek'],
-                "pajak": pajak
-            }
-            combined_data.append(combined_obj)
+    combined_data = [
+        {
+            "id_wisata": wisata['id_wisata'],
+            "nama_objek": wisata['nama_objek'],
+            "pajak": pajak
+        }
+        for wisata, pajak in product(wisata_data, pajak_data)
+    ]
 
     return combined_data
 
