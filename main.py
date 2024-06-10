@@ -240,7 +240,6 @@ class Hotel(BaseModel):
     RoomType: str
     Rate: int
     Availability: str
-    Insurance: str
 
 @app.get("/hotel", response_model=List[Hotel])
 def get_hotel():
@@ -343,31 +342,27 @@ def get_wisata_dan_pajak():
 
 
 
-def combine_wisata_tour_guide():
-    wisata_data = get_wisata()
-    tour_guide_data = get_tourGuide()
+@app.get("/wisataTourGuide", response_model=List[dict])
+def get_wisata_dan_tourGuide():
+    data_tourGuide = get_data_tourGuide_from_web()
+    tourGuide_dict = {tourGuide['id_guider']: tourGuide for tourGuide in data_tourGuide}
 
-    combined_data = []
-    for wisata in wisata_data:
-        for tour_guide in tour_guide_data:
-            combined_obj = {
-                "id_wisata": wisata['id_wisata'],
-                "nama_objek": wisata['nama_objek'],
-                "tour_guide": tour_guide
-            }
-            combined_data.append(combined_obj)
+    # Assuming `data_wisata` is defined elsewhere in your code
+    result = []
+    for wisata in data_wisata:
+        id_tourGuide = wisata.get("id_guider")
+        if id_tourGuide and id_tourGuide in tourGuide_dict:
+            result.append({
+                "wisata": wisata,
+                "tourGuide": tourGuide_dict[id_tourGuide]
+            })
+        else:
+            result.append({
+                "wisata": wisata,
+                "tourGuide": None
+            })
 
-    return combined_data
-
-class WisataTourGuide(BaseModel):
-    id_wisata: str
-    nama_objek: str
-    tour_guide: TourGuide
-
-@app.get("/wisataTourGuide", response_model=List[WisataTourGuide])
-def get_combined_data():
-    combined_data = combine_wisata_tour_guide()
-    return combined_data
+    return result
 
 
 
