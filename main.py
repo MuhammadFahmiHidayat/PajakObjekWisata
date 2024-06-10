@@ -2,6 +2,7 @@ import requests
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from itertools import product
 
 app = FastAPI(
     title="Objek Wisata",
@@ -223,20 +224,19 @@ def get_asuransi_by_id(id_asuransi: str):
 
 # Fungsi untuk mengambil data hotel dari web hosting lain
 def get_data_hotel_from_web():
-    url = "https://webhoteleai.online/APIroom"
+    url = "https://hotelbaru.onrender.com/rooms"
     response = requests.get(url)
     if response.status_code == 200:
-        data = response.json()
-        return data['room']  # Mengambil hanya bagian 'room' dari JSON
+        return response.json()  
     else:
         raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data HOTEL dari web hosting.")
-    
+
 # Model untuk Data Hotel
 class Hotel(BaseModel):
     RoomID: str
     RoomNumber: str
     RoomType: str
-    Rate: str
+    Rate: int
     Availability: str
     Insurance: str
 
@@ -268,7 +268,7 @@ def get_data_bank_from_web():
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
-        return data['data']['data']
+        return data['data']['data'] # Mengambil hanya bagian 'data' dari JSON
     else:
         raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data BANK dari web hosting.")
 
@@ -309,31 +309,29 @@ def get_bank_by_id(id: int):
 
 
 
-def combine_wisata_pajak():
-    wisata_data = get_wisata()
-    pajak_data = get_pajak()
 
-    combined_data = [
-        {
-            "id_wisata": wisata['id_wisata'],
-            "nama_objek": wisata['nama_objek'],
-            "pajak": pajak
-        }
-        for wisata, pajak in product(wisata_data, pajak_data)
-    ]
 
-    return combined_data
+# Endpoint untuk mendapatkan data wisata beserta informasi pajak
+@app.get("/wisataPajak", response_model=List[dict])
+def get_wisata_dan_pajak():
+    data_pajak = get_data_pajak_from_web()
+    pajak_dict = {pajak['id_pajak']: pajak for pajak in data_pajak}
 
-class WisataPajak(BaseModel):
-    id_wisata: str
-    nama_objek: str
-    pajak: Pajak
+    result = []
+    for wisata in data_wisata:
+        id_pajak = wisata.get("id_pajak")
+        if id_pajak and id_pajak in pajak_dict:
+            result.append({
+                "wisata": wisata,
+                "pajak": pajak_dict[id_pajak]
+            })
+        else:
+            result.append({
+                "wisata": wisata,
+                "pajak": None
+            })
 
-@app.get("/wisataPajak", response_model=List[WisataPajak])
-def get_combined_data():
-    combined_data = combine_wisata_pajak()
-    return combined_data
-
+    return result
 
 
 
