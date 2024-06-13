@@ -316,8 +316,8 @@ def get_bank_by_id(id: int):
 # Endpoint untuk mendapatkan data wisata beserta informasi pajak
 class WisataPajak(BaseModel):
     id_pajak: str
-    id_wisata : str
-    nama_objek : str
+    id_wisata: str
+    nama_objek: str
     status_kepemilikan: str
     jenis_pajak: str
     tarif_pajak: float
@@ -328,17 +328,17 @@ class WisataPajak(BaseModel):
 def get_wisata_pajak():
     data_pajak = get_data_pajak_from_web()
 
-    # Menggunakan zip_longest untuk menggabungkan data pajak dan data wisata
+    # Menggunakan zip_longest untuk menggabungkan data objek wisata dan data pajak
     gabungan_data = []
     for wisata, pajak in zip_longest(data_wisata, data_pajak, fillvalue={}):
         gabungan_data.append(WisataPajak(
-            id_pajak=pajak.get('id_pajak', None),
-            id_wisata=wisata.get('id_wisata', None),
-            nama_objek=wisata.get('nama_objek', None),
-            status_kepemilikan=pajak.get('status_kepemilikan', None),
-            jenis_pajak=pajak.get('jenis_pajak', None),
-            tarif_pajak=pajak.get('tarif_pajak', None),
-            besar_pajak=pajak.get('besar_pajak', None)
+            id_pajak = pajak.get('id_pajak', None),
+            id_wisata = wisata.get('id_wisata', None),
+            nama_objek = wisata.get('nama_objek', None),
+            status_kepemilikan = pajak.get('status_kepemilikan', None),
+            jenis_pajak = pajak.get('jenis_pajak', None),
+            tarif_pajak = pajak.get('tarif_pajak', None),
+            besar_pajak = pajak.get('besar_pajak', None)
         ))
 
     return gabungan_data
@@ -369,22 +369,22 @@ class WisataTourGuide(BaseModel):
 def get_wisata_tourGuide():
     data_tourGuide = get_data_tourGuide_from_web()
 
-    # Menggunakan zip_longest untuk menggabungkan data pajak dan data wisata
+    # Menggunakan zip_longest untuk menggabungkan data objek wisata dan data tour guide
     gabungan_data = []
     for wisata, tourGuide in zip_longest(data_wisata, data_tourGuide, fillvalue={}):
         gabungan_data.append(WisataTourGuide(
-            id_wisata=wisata.get('id_wisata', None),
-            nama_objek=wisata.get('nama_objek', None),
-            nama_daerah=wisata.get('nama_daerah', None),
-            kategori=wisata.get('kategori', None),
-            alamat=wisata.get('alamat', None),
-            kontak=wisata.get('kontak', None),
-            harga_tiket=wisata.get('harga_tiket', None),
-            id_guider=tourGuide.get('id_guider', None),
-            nama_guider=tourGuide.get('nama_guider', None),
-            profile=tourGuide.get('profile', None),
-            fee=tourGuide.get('fee', None),
-            status_ketersediaan=tourGuide.get('status_ketersediaan', None)
+            id_wisata = wisata.get('id_wisata', None),
+            nama_objek = wisata.get('nama_objek', None),
+            nama_daerah = wisata.get('nama_daerah', None),
+            kategori = wisata.get('kategori', None),
+            alamat = wisata.get('alamat', None),
+            kontak = wisata.get('kontak', None),
+            harga_tiket = wisata.get('harga_tiket', None),
+            id_guider = tourGuide.get('id_guider', None),
+            nama_guider = tourGuide.get('nama_guider', None),
+            profile = tourGuide.get('profile', None),
+            fee = tourGuide.get('fee', None),
+            status_ketersediaan = tourGuide.get('status_ketersediaan', None)
         ))
 
     return gabungan_data
@@ -398,7 +398,7 @@ def get_wisata_tourGuide():
 
 
 
-# Endpoint untuk mendapatkan data wisata beserta informasi tour guide
+# Endpoint untuk mendapatkan data wisata beserta informasi asuransi
 class WisataAsuransi(BaseModel):
     id_wisata: str
     nama_objek: str
@@ -407,21 +407,21 @@ class WisataAsuransi(BaseModel):
     id_asuransi: str
     jenis_asuransi: str
 
-# Endpoint untuk mendapatkan data gabungan objek wisata dan tour guide
+# Endpoint untuk mendapatkan data gabungan objek wisata dan asuransi
 @app.get('/wisataAsuransi', response_model=List[WisataAsuransi])
 def get_wisata_asuransi():
     data_asuransi = get_data_asuransi_from_web()
 
-    # Menggunakan zip_longest untuk menggabungkan data pajak dan data wisata
+    # Menggunakan zip_longest untuk menggabungkan data objek wisata dan asuransi
     gabungan_data = []
     for wisata, asuransi in zip_longest(data_wisata, data_asuransi, fillvalue={}):
         gabungan_data.append(WisataAsuransi(
-            id_wisata=wisata.get('id_wisata', None),
-            nama_objek=wisata.get('nama_objek', None),
-            alamat=wisata.get('alamat', None),
-            kontak=wisata.get('kontak', None),
-            id_asuransi=asuransi.get('id_asuransi', None),
-            jenis_asuransi=asuransi.get('jenis_asuransi', None)
+            id_wisata = wisata.get('id_wisata', None),
+            nama_objek = wisata.get('nama_objek', None),
+            alamat = wisata.get('alamat', None),
+            kontak = wisata.get('kontak', None),
+            id_asuransi = asuransi.get('id_asuransi', None),
+            jenis_asuransi = asuransi.get('jenis_asuransi', None)
         ))
 
     return gabungan_data
@@ -435,31 +435,44 @@ def get_wisata_asuransi():
 
 
 
-def combine_wisata_hotel():
-    wisata_data = get_wisata()
-    hotel_data = get_hotel()
-
-    combined_data = []
-    for wisata in wisata_data:
-        for hotel in hotel_data:
-            combined_obj = {
-                "id_wisata": wisata['id_wisata'],
-                "nama_objek": wisata['nama_objek'],
-                "hotel": hotel
-            }
-            combined_data.append(combined_obj)
-
-    return combined_data
-
+# Endpoint untuk mendapatkan data wisata beserta informasi hotel
 class WisataHotel(BaseModel):
     id_wisata: str
     nama_objek: str
-    hotel: Hotel
+    nama_daerah: str
+    kategori: str
+    alamat: str
+    kontak: str
+    harga_tiket: int
+    RoomID: str
+    RoomNumber: str
+    RoomType: str
+    Rate: int
+    Availability: str
+# Endpoint untuk mendapatkan data gabungan objek wisata dan hotel
+@app.get('/wisataHotel', response_model=List[WisataHotel])
+def get_wisata_hotel():
+    data_hotel = get_data_hotel_from_web()
 
-@app.get("/wisataHotel", response_model=List[WisataHotel])
-def get_combined_data():
-    combined_data = combine_wisata_hotel()
-    return combined_data
+    # Menggunakan zip_longest untuk menggabungkan data objek wisata dan data hotel
+    gabungan_data = []
+    for wisata, hotel in zip_longest(data_wisata, data_hotel, fillvalue={}):
+        gabungan_data.append(WisataHotel(
+            id_wisata = wisata.get('id_wisata', None),
+            nama_objek = wisata.get('nama_objek', None),
+            nama_daerah = wisata.get('nama_daerah', None),
+            kategori = wisata.get('kategori', None),
+            alamat = wisata.get('alamat', None),
+            kontak = wisata.get('kontak', None),
+            harga_tiket = wisata.get('harga_tiket', None),
+            RoomID = hotel.get('RoomID', None),
+            RoomNumber = hotel.get('RoomNumber', None),
+            RoomType = hotel.get('RoomType', None),
+            Rate = hotel.get('Rate', None),
+            Availability = hotel.get('Availability', None)
+        ))
+
+    return gabungan_data
 
 
 
@@ -470,28 +483,32 @@ def get_combined_data():
 
 
 
-def combine_wisata_bank():
-    wisata_data = get_wisata()
-    bank_data = get_bank()
-
-    combined_data = []
-    for wisata in wisata_data:
-        for bank in bank_data:
-            combined_obj = {
-                "id_wisata": wisata['id_wisata'],
-                "nama_objek": wisata['nama_objek'],
-                "bank": bank
-            }
-            combined_data.append(combined_obj)
-
-    return combined_data
-
+# Endpoint untuk mendapatkan data wisata beserta informasi hotel
 class WisataBank(BaseModel):
     id_wisata: str
-    nama_objek: str
-    bank: Bank
+    nama_daerah: str
+    harga_tiket: int
+    id: int
+    saldo: int
+    active_date: str
+    expired_date: str
+    
+# Endpoint untuk mendapatkan data gabungan objek wisata dan hotel
+@app.get('/wisataBank', response_model=List[WisataBank])
+def get_wisata_bank():
+    data_bank = get_data_bank_from_web()
 
-@app.get("/wisataBank", response_model=List[WisataBank])
-def get_combined_data():
-    combined_data = combine_wisata_bank()
-    return combined_data
+    # Menggunakan zip_longest untuk menggabungkan data objek wisata dan data hotel
+    gabungan_data = []
+    for wisata, bank in zip_longest(data_wisata, data_bank, fillvalue={}):
+        gabungan_data.append(WisataBank(
+            id_wisata=wisata.get('id_wisata', None),
+            nama_daerah=wisata.get('nama_daerah', None),
+            harga_tiket=wisata.get('harga_tiket', None),
+            id=bank.get('id', None),
+            saldo=bank.get('saldo', None),
+            active_date=bank.get('active_date', None),
+            expired_date=bank.get('expired_date', None)
+        ))
+
+    return gabungan_data
