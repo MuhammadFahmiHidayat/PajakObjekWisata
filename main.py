@@ -331,10 +331,27 @@ def get_wisata_dan_pajak():
                 "wisata": wisata,
                 "pajak": None
             })
-
     return result
 
+#@app.get("/wisataPajak", response_model=List[dict])
+#def get_wisata_dan_pajak():
+    data_pajak = get_data_pajak_from_web()
+    pajak_dict = {pajak['id_pajak']: pajak for pajak in data_pajak}
 
+    result = []
+    for wisata in data_wisata:
+        id_pajak = wisata.get("id_pajak")
+        if id_pajak and id_pajak in pajak_dict:
+            result.append({
+                "wisata": wisata,
+                "pajak": pajak_dict[id_pajak]
+            })
+        else:
+            result.append({
+                "wisata": wisata,
+                "pajak": None
+            })
+    return result
 
 
 
