@@ -343,6 +343,18 @@ def get_wisata_pajak():
 
     return gabungan_data
 
+# Endpoint untuk mendapatkan data wisata beserta informasi pajak berdasarkan id_pajak
+@app.get('/wisataPajak/{id_pajak}', response_model=List[WisataPajak])
+def get_wisata_pajak_by_id(id_pajak: str):
+    data_pajak = get_data_pajak_from_web()
+    data_wisata_pajak = get_wisata_pajak()
+
+    hasil = [wp for wp in data_wisata_pajak if wp.id_pajak == id_pajak]
+
+    if not hasil:
+        raise HTTPException(status_code=404, detail="Data wisata dengan id_pajak tersebut tidak ditemukan.")
+
+    return hasil
 
 
 
@@ -389,6 +401,19 @@ def get_wisata_tourGuide():
 
     return gabungan_data
 
+# Endpoint untuk mendapatkan data wisata beserta informasi pajak berdasarkan id_pajak
+@app.get('/wisataTourGuide/{id_guider}', response_model=List[WisataTourGuide])
+def get_wisata_tourGuide_by_id(id_guider: str):
+    data_tourGuide = get_data_tourGuide_from_web()
+    data_wisata_tourGuide = get_wisata_tourGuide()
+
+    hasil = [wp for wp in data_wisata_tourGuide if wp.id_guider == id_guider]
+
+    if not hasil:
+        raise HTTPException(status_code=404, detail="Data wisata dengan id_guider tersebut tidak ditemukan.")
+
+    return hasil
+
 
 
 
@@ -425,6 +450,19 @@ def get_wisata_asuransi():
         ))
 
     return gabungan_data
+
+# Endpoint untuk mendapatkan data wisata beserta informasi pajak berdasarkan id_pajak
+@app.get('/wisataAsuransi/{id_asuransi}', response_model=List[WisataAsuransi])
+def get_wisata_asuransi_by_id(id_asuransi: str):
+    data_asuransi = get_data_asuransi_from_web()
+    data_wisata_asuransi = get_wisata_asuransi()
+
+    hasil = [wp for wp in data_wisata_asuransi if wp.id_asuransi == id_asuransi]
+
+    if not hasil:
+        raise HTTPException(status_code=404, detail="Data wisata dengan id_asuransi tersebut tidak ditemukan.")
+
+    return hasil
 
 
 
@@ -474,6 +512,19 @@ def get_wisata_hotel():
 
     return gabungan_data
 
+# Endpoint untuk mendapatkan data wisata beserta informasi pajak berdasarkan id_pajak
+@app.get('/wisataHotel/{RoomID}', response_model=List[WisataHotel])
+def get_wisata_hotel_by_id(RoomID: str):
+    data_hotel = get_data_hotel_from_web()
+    data_wisata_hotel = get_wisata_hotel()
+
+    hasil = [wp for wp in data_wisata_hotel if wp.RoomID == RoomID]
+
+    if not hasil:
+        raise HTTPException(status_code=404, detail="Data wisata dengan RoomID tersebut tidak ditemukan.")
+
+    return hasil
+
 
 
 
@@ -512,3 +563,16 @@ def get_wisata_bank():
         ))
 
     return gabungan_data
+
+# Endpoint untuk mendapatkan data wisata beserta informasi pajak berdasarkan id_pajak
+@app.get('/wisataBank/{id}', response_model=List[WisataBank])
+def get_wisata_bank_by_id(id: int):
+    data_bank = get_data_bank_from_web()
+    data_wisata_bank = get_wisata_bank()
+
+    hasil = [wp for wp in data_wisata_bank if wp.id == id]
+
+    if not hasil:
+        raise HTTPException(status_code=404, detail="Data wisata dengan id_bank tersebut tidak ditemukan.")
+
+    return hasil
