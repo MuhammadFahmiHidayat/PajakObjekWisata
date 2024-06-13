@@ -2,6 +2,7 @@ import requests
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from itertools import zip_longest
 from itertools import product
 
 app = FastAPI(
@@ -313,45 +314,34 @@ def get_bank_by_id(id: int):
 
 
 # Endpoint untuk mendapatkan data wisata beserta informasi pajak
-@app.get("/wisataPajak", response_model=List[dict])
-def get_wisata_dan_pajak():
+class WisataPajak(BaseModel):
+    id_pajak: str
+    id_wisata : str
+    nama_objek : str
+    status_kepemilikan: str
+    jenis_pajak: str
+    tarif_pajak: float
+    besar_pajak: int
+
+# Endpoint untuk mendapatkan data gabungan objek wisata pajak
+@app.get('/wisataPajak', response_model=List[WisataPajak])
+def get_wisata_pajak():
     data_pajak = get_data_pajak_from_web()
-    pajak_dict = {pajak['id_pajak']: pajak for pajak in data_pajak}
 
-    result = []
-    for wisata in data_wisata:
-        id_pajak = wisata.get("id_pajak")
-        if id_pajak and id_pajak in pajak_dict:
-            result.append({
-                "wisata": wisata,
-                "pajak": pajak_dict[id_pajak]
-            })
-        else:
-            result.append({
-                "wisata": wisata,
-                "pajak": None
-            })
-    return result
+    # Menggunakan zip_longest untuk menggabungkan data pajak dan data wisata
+    gabungan_data = []
+    for wisata, pajak in zip_longest(data_wisata, data_pajak, fillvalue={}):
+        gabungan_data.append(WisataPajak(
+            id_pajak=pajak.get('id_pajak', None),
+            id_wisata=wisata.get('id_wisata', None),
+            nama_objek=wisata.get('nama_objek', None),
+            status_kepemilikan=pajak.get('status_kepemilikan', None),
+            jenis_pajak=pajak.get('jenis_pajak', None),
+            tarif_pajak=pajak.get('tarif_pajak', None),
+            besar_pajak=pajak.get('besar_pajak', None)
+        ))
 
-#@app.get("/wisataPajak", response_model=List[dict])
-#def get_wisata_dan_pajak():
-    data_pajak = get_data_pajak_from_web()
-    pajak_dict = {pajak['id_pajak']: pajak for pajak in data_pajak}
-
-    result = []
-    for wisata in data_wisata:
-        id_pajak = wisata.get("id_pajak")
-        if id_pajak and id_pajak in pajak_dict:
-            result.append({
-                "wisata": wisata,
-                "pajak": pajak_dict[id_pajak]
-            })
-        else:
-            result.append({
-                "wisata": wisata,
-                "pajak": None
-            })
-    return result
+    return gabungan_data
 
 
 
@@ -359,62 +349,82 @@ def get_wisata_dan_pajak():
 
 
 
-@app.get("/wisataTourGuide", response_model=List[dict])
-def get_wisata_dan_tourGuide():
+# Endpoint untuk mendapatkan data wisata beserta informasi tour guide
+class WisataTourGuide(BaseModel):
+    id_wisata: str
+    nama_objek: str
+    nama_daerah: str
+    kategori: str
+    alamat: str
+    kontak: str
+    harga_tiket: int
+    id_guider:str
+    nama_guider: str
+    profile: str
+    fee: int
+    status_ketersediaan: str
+
+# Endpoint untuk mendapatkan data gabungan objek wisata dan tour guide
+@app.get('/wisataTourGuide', response_model=List[WisataTourGuide])
+def get_wisata_tourGuide():
     data_tourGuide = get_data_tourGuide_from_web()
-    tourGuide_dict = {tourGuide['id_guider']: tourGuide for tourGuide in data_tourGuide}
 
-    # Assuming `data_wisata` is defined elsewhere in your code
-    result = []
-    for wisata in data_wisata:
-        id_tourGuide = wisata.get("id_guider")
-        if id_tourGuide and id_tourGuide in tourGuide_dict:
-            result.append({
-                "wisata": wisata,
-                "tourGuide": tourGuide_dict[id_tourGuide]
-            })
-        else:
-            result.append({
-                "wisata": wisata,
-                "tourGuide": None
-            })
+    # Menggunakan zip_longest untuk menggabungkan data pajak dan data wisata
+    gabungan_data = []
+    for wisata, tourGuide in zip_longest(data_wisata, data_tourGuide, fillvalue={}):
+        gabungan_data.append(WisataTourGuide(
+            id_wisata=wisata.get('id_wisata', None),
+            nama_objek=wisata.get('nama_objek', None),
+            nama_daerah=wisata.get('nama_daerah', None),
+            kategori=wisata.get('kategori', None),
+            alamat=wisata.get('alamat', None),
+            kontak=wisata.get('kontak', None),
+            harga_tiket=wisata.get('harga_tiket', None),
+            id_guider=tourGuide.get('id_guider', None),
+            nama_guider=tourGuide.get('nama_guider', None),
+            profile=tourGuide.get('profile', None),
+            fee=tourGuide.get('fee', None),
+            status_ketersediaan=tourGuide.get('status_ketersediaan', None)
+        ))
 
-    return result
-
-
-
-
+    return gabungan_data
 
 
 
 
 
 
-def combine_wisata_asuransi():
-    wisata_data = get_wisata()
-    asuransi_data = get_asuransi()
 
-    combined_data = []
-    for wisata in wisata_data:
-        for asuransi in asuransi_data:
-            combined_obj = {
-                "id_wisata": wisata['id_wisata'],
-                "nama_objek": wisata['nama_objek'],
-                "asuransi": asuransi
-            }
-            combined_data.append(combined_obj)
 
-    return combined_data
 
+
+# Endpoint untuk mendapatkan data wisata beserta informasi tour guide
 class WisataAsuransi(BaseModel):
     id_wisata: str
     nama_objek: str
-    asuransi: Asuransi
+    alamat: str
+    kontak: str
+    id_asuransi: str
+    jenis_asuransi: str
 
-@app.get("/wisataAsuransi", response_model=List[WisataAsuransi])
-def get_combined_data():
-    combined_data = combine_wisata_asuransi()
-    return combined_data
+# Endpoint untuk mendapatkan data gabungan objek wisata dan tour guide
+@app.get('/wisataAsuransi', response_model=List[WisataAsuransi])
+def get_wisata_asuransi():
+    data_asuransi = get_data_asuransi_from_web()
+
+    # Menggunakan zip_longest untuk menggabungkan data pajak dan data wisata
+    gabungan_data = []
+    for wisata, asuransi in zip_longest(data_wisata, data_asuransi, fillvalue={}):
+        gabungan_data.append(WisataAsuransi(
+            id_wisata=wisata.get('id_wisata', None),
+            nama_objek=wisata.get('nama_objek', None),
+            alamat=wisata.get('alamat', None),
+            kontak=wisata.get('kontak', None),
+            id_asuransi=asuransi.get('id_asuransi', None),
+            jenis_asuransi=asuransi.get('jenis_asuransi', None)
+        ))
+
+    return gabungan_data
 
 
 
