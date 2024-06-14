@@ -4,15 +4,18 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from itertools import zip_longest
 import mysql.connector
+import os
+from dotenv import load_dotenv
 from itertools import product
+load_dotenv()
 
 def get_db_connection():
     conn = mysql.connector.connect(
-        host="by1zqdy05oe4jgqenmuk-mysql.services.clever-cloud.com",
-        user="uya6nckengbb1dcd",
-        password="0kbaUuCKVx8RAH67fNY",
-        database="by1zqdy05oe4jgqenmuk",
-        port="20847"
+        host=os.environ.get('DB_HOST'),
+        user=os.environ.get('DB_USER'),
+        password=os.environ.get('DB_PASSWORD'),
+        database=os.environ.get('DB_NAME'),
+        port=os.environ.get('DB_PORT')
     )
     return conn
 
