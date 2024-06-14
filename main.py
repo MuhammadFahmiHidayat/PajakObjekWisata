@@ -11,11 +11,11 @@ load_dotenv()
 
 def get_db_connection():
     conn = mysql.connector.connect(
-        host=os.environ.get('DB_HOST'),
-        user=os.environ.get('DB_USER'),
-        password=os.environ.get('DB_PASSWORD'),
-        database=os.environ.get('DB_NAME'),
-        port=os.environ.get('DB_PORT')
+        host="by1zqdy05oe4jgqenmuk-mysql.services.clever-cloud.com",
+        user="uya6nckengbb1dcd",
+        password="0kbaUuCKVx8RAH67fNY",
+        database="by1zqdy05oe4jgqenmuk",
+        port="20847"
     )
     return conn
 
@@ -628,11 +628,11 @@ def get_wisata_bank():
     gabungan_data = []
     for wisata, bank in zip_longest(data_wisata, data_bank, fillvalue={}):
         gabungan_data.append(WisataBank(
-            id_wisata = wisata.get('id_wisata', None),
-            nama_daerah = wisata.get('nama_daerah', None),
-            harga_tiket = wisata.get('harga_tiket', None),
-            id = bank.get('id', None),
-            saldo = bank.get('saldo', None),
+            id_wisata=wisata.get('id_wisata', None),
+            nama_daerah=wisata.get('nama_daerah', None),
+            harga_tiket=wisata.get('harga_tiket', None),
+            id=bank.get('id', None),
+            saldo=bank.get('saldo', None),
             active_date=bank.get('active_date', None),
             expired_date=bank.get('expired_date', None)
         ))
@@ -657,3 +657,8 @@ if __name__ == "__main__":
     conn = get_db_connection()
     create_tables(conn)
     conn.close()
+    
+    
+    
+    
+    
