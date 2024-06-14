@@ -4,10 +4,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from itertools import zip_longest
 import mysql.connector
-import os
-from dotenv import load_dotenv
 from itertools import product
-load_dotenv()
 
 def get_db_connection():
     conn = mysql.connector.connect(
