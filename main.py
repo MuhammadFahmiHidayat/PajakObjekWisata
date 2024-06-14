@@ -8,10 +8,11 @@ from itertools import product
 
 def get_db_connection():
     conn = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="",
-        database="data_eai"
+        host="by1zqdy05oe4jgqenmuk-mysql.services.clever-cloud.com",
+        user="uya6nckengbb1dcd",
+        password="0kbaUuCKVx8RAH67fNY",
+        database="by1zqdy05oe4jgqenmuk",
+        port="20847"
     )
     return conn
 
@@ -50,68 +51,103 @@ class Wisata(BaseModel):
     kontak: str
     harga_tiket: int
 
-# Dummy data untuk wisata
-data_wisata = [
-    {"id_wisata": "OP01", "nama_objek": "Orchid Forest Cikole", "nama_daerah": "Bandung", "kategori": "Wisata Alam, Wisata Keluarga, Wisata Edukasi", "alamat": "Jl. Tangkuban Perahu Raya No.80E, Cikole, Lembang, Kabupaten Bandung Barat, Jawa Barat 40391, Indonesia", "kontak": "02282325888", "harga_tiket": 40000, "id_pajak": "PJ001", "id_guider": "1111", "id_asuransi": "AA01", "RoomID": "1", "id": "2021403001"},
-    {"id_wisata": "OP02", "nama_objek": "Taman Impian Jaya Ancol", "nama_daerah": "Jakarta", "kategori": "Wisata Hiburan, Wisata Keluarga, Wisata Alam, Wisata Edukasi", "alamat": "Jl. Lodan Timur No.7, Ancol, Pademangan, Kota Jakarta Utara, Daerah Khusus Ibukota Jakarta 14430, Indonesia", "kontak": "02129222222", "harga_tiket": 25000,  "id_pajak": "PJ002", "id_guider": "2222", "id_asuransi": "AA02", "RoomID": "2", "id": "2021403002"},
-    {"id_wisata": "OP03", "nama_objek": "Candi Borobudur", "nama_daerah": "Yogyakarta", "kategori": "Wisata Budaya, Wisata Sejarah, Wisata Religi", "alamat": "Jl. Badrawati No.1, Borobudur, Magelang, Jawa Tengah 56553, Indonesia", "kontak": "0293788210", "harga_tiket": 50000, "id_pajak": "PJ003", "id_guider": "3333", "id_asuransi": "AA03", "RoomID": "3", "id": "2021403003"},
-    {"id_wisata": "OP04", "nama_objek": "Uluwatu Temple", "nama_daerah": "Bali", "kategori": "Wisata Budaya, Wisata Religi, Wisata Alam", "alamat": "Pecatu, Kec. Kuta Selatan, Kabupaten Badung, Bali", "kontak": "0361915078", "harga_tiket": 50000, "id_pajak": "PJ004", "id_guider": "4444", "id_asuransi": "AA04", "RoomID": "4", "id": "2021403004"},
-    {"id_wisata": "OP05", "nama_objek": "Surabaya North Quay", "nama_daerah": "Surabaya", "kategori": "Wisata Hiburan, Wisata Keluarga, Wisata Kuliner", "alamat": "Jalan Perak Timur, Perak Utara, Pabean Cantian, Kota Surabaya, Jawa Timur 60161", "kontak": "081336101290", "harga_tiket": 50000, "id_pajak": "PJ005", "id_guider": "5555", "id_asuransi": "AA05", "RoomID": "5", "id": "2021403005"}
-]
 
-#@app.get("/wisata", response_model=List[Wisata])
-#def get_wisata():
-#    conn = get_db_connection()
-#    cursor = conn.cursor()
-#    cursor.execute("SELECT * FROM wisata")
-#    data = cursor.fetchall()
-#    conn.close()
-#    return [Wisata(id_wisata=row[0], nama_objek=row[1], nama_daerah=row[2], kategori=row[3], alamat=row[4], kontak=row[5], harga_tiket=row[6]) for row in data]
 
-# Endpoint untuk menambahkan data wisata
-@app.post("/wisata")
-def tambah_wisata(wisata: Wisata):
-    data_wisata.append(wisata.dict())
-    return {"message": "Data wisata berhasil ditambahkan."}
-
-# Endpoint untuk mendapatkan data wisata
 @app.get("/wisata", response_model=List[Wisata])
 def get_wisata():
-    return data_wisata
+    conn = get_db_connection()
+    create_tables(conn)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM wisata")
+    data = cursor.fetchall()
+    conn.close()
+    return [Wisata(id_wisata=row[0], nama_objek=row[1], nama_daerah=row[2], kategori=row[3], alamat=row[4], kontak=row[5], harga_tiket=row[6]) for row in data]
 
+@app.post("/wisata")
+def tambah_wisata(wisata: Wisata):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    query = "INSERT INTO wisata (id_wisata, nama_objek, nama_daerah, kategori, alamat, kontak, harga_tiket) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    values = (wisata.id_wisata, wisata.nama_objek, wisata.nama_daerah, wisata.kategori, wisata.alamat, wisata.kontak, wisata.harga_tiket)
+    
+    try:
+        cursor.execute(query, values)
+        conn.commit()
+        return {"message": "Data wisata berhasil ditambahkan."}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+# Fungsi untuk mendapatkan index data wisata dari database
 def get_wisata_index(id_wisata):
-    for index, wisata in enumerate(data_wisata):
-        if wisata['id_wisata'] == id_wisata:
-            return index
-    return None
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    query = "SELECT * FROM wisata WHERE id_wisata = %s"
+    cursor.execute(query, (id_wisata,))
+    data = cursor.fetchone()
+    
+    conn.close()
+    
+    if data:
+        return data
+    else:
+        return None
 
 # Endpoint untuk detail get id
 @app.get("/wisata/{id_wisata}", response_model=Optional[Wisata])
 def get_wisata_by_id(id_wisata: str):
-    for wisata in data_wisata:
-        if wisata['id_wisata'] == id_wisata:
-            return Wisata(**wisata)
-    return None
+    index = get_wisata_index(id_wisata)
+    if index:
+        return Wisata(id_wisata=index[0], nama_objek=index[1], nama_daerah=index[2], kategori=index[3], alamat=index[4], kontak=index[5], harga_tiket=index[6])
+    else:
+        return None
 
 # Endpoint untuk memperbarui data wisata dengan hanya memasukkan id_wisata
 @app.put("/wisata/{id_wisata}")
 def update_wisata_by_id(id_wisata: str, wisata_baru: Wisata):
-    index = get_wisata_index(id_wisata)
-    if index is not None:
-        data_wisata[index] = wisata_baru.dict()
-        return {"message": "Data wisata berhasil diperbarui."}
-    else:
-        raise HTTPException(status_code=404, detail="Data wisata tidak ditemukan.")
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    query = "UPDATE wisata SET nama_objek = %s, nama_daerah = %s, kategori = %s, alamat = %s, kontak = %s, harga_tiket = %s WHERE id_wisata = %s"
+    values = (wisata_baru.nama_objek, wisata_baru.nama_daerah, wisata_baru.kategori, wisata_baru.alamat, wisata_baru.kontak, wisata_baru.harga_tiket, id_wisata)
+    
+    try:
+        cursor.execute(query, values)
+        conn.commit()
+        if cursor.rowcount > 0:
+            return {"message": "Data wisata berhasil diperbarui."}
+        else:
+            raise HTTPException(status_code=404, detail="Data wisata tidak ditemukan.")
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 # Endpoint untuk menghapus data wisata
 @app.delete("/wisata/{id_wisata}")
 def delete_wisata(id_wisata: str):
-    index = get_wisata_index(id_wisata)
-    if index is not None:
-        del data_wisata[index]
-        return {"message": "Data wisata berhasil dihapus."}
-    else:
-        raise HTTPException(status_code=404, detail="Data wisata tidak ditemukan.")
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    query = "DELETE FROM wisata WHERE id_wisata = %s"
+    
+    try:
+        cursor.execute(query, (id_wisata,))
+        conn.commit()
+        if cursor.rowcount > 0:
+            return {"message": "Data wisata berhasil dihapus."}
+        else:
+            raise HTTPException(status_code=404, detail="Data wisata tidak ditemukan.")
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 
 
@@ -618,3 +654,16 @@ if __name__ == "__main__":
     conn = get_db_connection()
     create_tables(conn)
     conn.close()
+    
+    
+    
+    
+    
+# Dummy data untuk wisata
+#data_wisata = [
+#    {"id_wisata": "OP01", "nama_objek": "Orchid Forest Cikole", "nama_daerah": "Bandung", "kategori": "Wisata Alam, Wisata Keluarga, Wisata Edukasi", "alamat": "Jl. Tangkuban Perahu Raya No.80E, Cikole, Lembang, Kabupaten Bandung Barat, Jawa Barat 40391, Indonesia", "kontak": "02282325888", "harga_tiket": 40000, "id_pajak": "PJ001", "id_guider": "1111", "id_asuransi": "AA01", "RoomID": "1", "id": "2021403001"},
+#    {"id_wisata": "OP02", "nama_objek": "Taman Impian Jaya Ancol", "nama_daerah": "Jakarta", "kategori": "Wisata Hiburan, Wisata Keluarga, Wisata Alam, Wisata Edukasi", "alamat": "Jl. Lodan Timur No.7, Ancol, Pademangan, Kota Jakarta Utara, Daerah Khusus Ibukota Jakarta 14430, Indonesia", "kontak": "02129222222", "harga_tiket": 25000,  "id_pajak": "PJ002", "id_guider": "2222", "id_asuransi": "AA02", "RoomID": "2", "id": "2021403002"},
+#    {"id_wisata": "OP03", "nama_objek": "Candi Borobudur", "nama_daerah": "Yogyakarta", "kategori": "Wisata Budaya, Wisata Sejarah, Wisata Religi", "alamat": "Jl. Badrawati No.1, Borobudur, Magelang, Jawa Tengah 56553, Indonesia", "kontak": "0293788210", "harga_tiket": 50000, "id_pajak": "PJ003", "id_guider": "3333", "id_asuransi": "AA03", "RoomID": "3", "id": "2021403003"},
+#    {"id_wisata": "OP04", "nama_objek": "Uluwatu Temple", "nama_daerah": "Bali", "kategori": "Wisata Budaya, Wisata Religi, Wisata Alam", "alamat": "Pecatu, Kec. Kuta Selatan, Kabupaten Badung, Bali", "kontak": "0361915078", "harga_tiket": 50000, "id_pajak": "PJ004", "id_guider": "4444", "id_asuransi": "AA04", "RoomID": "4", "id": "2021403004"},
+#    {"id_wisata": "OP05", "nama_objek": "Surabaya North Quay", "nama_daerah": "Surabaya", "kategori": "Wisata Hiburan, Wisata Keluarga, Wisata Kuliner", "alamat": "Jalan Perak Timur, Perak Utara, Pabean Cantian, Kota Surabaya, Jawa Timur 60161", "kontak": "081336101290", "harga_tiket": 50000, "id_pajak": "PJ005", "id_guider": "5555", "id_asuransi": "AA05", "RoomID": "5", "id": "2021403005"}
+#]
