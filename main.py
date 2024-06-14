@@ -3,7 +3,32 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from itertools import zip_longest
+import mysql.connector
 from itertools import product
+
+def get_db_connection():
+    conn = mysql.connector.connect(
+        host="127.0.0.1",
+        user="root",
+        password="",
+        database="data_eai"
+    )
+    return conn
+
+def create_tables(conn):
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS wisata (
+            id_wisata VARCHAR(255) PRIMARY KEY,
+            nama_objek VARCHAR(255),
+            nama_daerah VARCHAR(255),
+            kategori VARCHAR(255),
+            alamat VARCHAR(255),
+            kontak VARCHAR(255),
+            harga_tiket INT
+        )
+    """)
+    conn.commit()
 
 app = FastAPI(
     title="Objek Wisata",
@@ -33,6 +58,15 @@ data_wisata = [
     {"id_wisata": "OP04", "nama_objek": "Uluwatu Temple", "nama_daerah": "Bali", "kategori": "Wisata Budaya, Wisata Religi, Wisata Alam", "alamat": "Pecatu, Kec. Kuta Selatan, Kabupaten Badung, Bali", "kontak": "0361915078", "harga_tiket": 50000, "id_pajak": "PJ004", "id_guider": "4444", "id_asuransi": "AA04", "RoomID": "4", "id": "2021403004"},
     {"id_wisata": "OP05", "nama_objek": "Surabaya North Quay", "nama_daerah": "Surabaya", "kategori": "Wisata Hiburan, Wisata Keluarga, Wisata Kuliner", "alamat": "Jalan Perak Timur, Perak Utara, Pabean Cantian, Kota Surabaya, Jawa Timur 60161", "kontak": "081336101290", "harga_tiket": 50000, "id_pajak": "PJ005", "id_guider": "5555", "id_asuransi": "AA05", "RoomID": "5", "id": "2021403005"}
 ]
+
+#@app.get("/wisata", response_model=List[Wisata])
+#def get_wisata():
+#    conn = get_db_connection()
+#    cursor = conn.cursor()
+#    cursor.execute("SELECT * FROM wisata")
+#    data = cursor.fetchall()
+#    conn.close()
+#    return [Wisata(id_wisata=row[0], nama_objek=row[1], nama_daerah=row[2], kategori=row[3], alamat=row[4], kontak=row[5], harga_tiket=row[6]) for row in data]
 
 # Endpoint untuk menambahkan data wisata
 @app.post("/wisata")
@@ -125,6 +159,8 @@ def get_pajak_by_id(id_pajak: str):
         if pajak['id_pajak'] == id_pajak:
             return Pajak(**pajak)
     return None
+
+
 
 
 
@@ -576,3 +612,9 @@ def get_wisata_bank_by_id(id: int):
         raise HTTPException(status_code=404, detail="Data wisata dengan id_bank tersebut tidak ditemukan.")
 
     return hasil
+
+
+if __name__ == "__main__":
+    conn = get_db_connection()
+    create_tables(conn)
+    conn.close()
