@@ -23,11 +23,9 @@ MarkupSafe==2.1.5
 mdurl==0.1.2
 mysql-connector-python==8.4.0
 orjson==3.10.3
-psycopg2==2.9.9
 pydantic==2.7.2
 pydantic_core==2.18.3
 Pygments==2.18.0
-python-dotenv==1.0.1
 python-multipart==0.0.9
 PyYAML==6.0.1
 requests==2.32.3
