@@ -631,8 +631,8 @@ def get_wisata_bank():
             id_wisata = wisata.get('id_wisata', None),
             nama_daerah = wisata.get('nama_daerah', None),
             harga_tiket = wisata.get('harga_tiket', None),
-            id=bank.get('id', None),
-            saldo=bank.get('saldo', None),
+            id = bank.get('id', None),
+            saldo = bank.get('saldo', None),
             active_date=bank.get('active_date', None),
             expired_date=bank.get('expired_date', None)
         ))
